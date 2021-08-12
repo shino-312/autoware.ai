@@ -463,8 +463,10 @@ static void map_callback(const sensor_msgs::PointCloud2::ConstPtr& input)
 
 // Setting point cloud to be aligned to.
 #ifdef CUDA_FOUND
+    std::cout << "[ndt_matching] CUDA is found" << std::endl;
     if (_use_gpu == true)
     {
+      std::cout << "[ndt_matching] Use GPU ver" << std::endl;
       std::shared_ptr<gpu::GNormalDistributionsTransform> new_gpu_ndt_ptr = std::make_shared<gpu::GNormalDistributionsTransform>();
       new_gpu_ndt_ptr->setResolution(ndt_res);
       new_gpu_ndt_ptr->setInputTarget(map_ptr);
@@ -487,6 +489,7 @@ static void map_callback(const sensor_msgs::PointCloud2::ConstPtr& input)
 #endif
     if (_use_fast_pcl)
     {
+      std::cout << "[ndt_matching] Use Fast PCL ver" << std::endl;
       cpu::NormalDistributionsTransform<pcl::PointXYZ, pcl::PointXYZ> new_cpu_ndt;
       new_cpu_ndt.setResolution(ndt_res);
       new_cpu_ndt.setInputTarget(map_ptr);
@@ -507,6 +510,7 @@ static void map_callback(const sensor_msgs::PointCloud2::ConstPtr& input)
     }
     else
     {
+      std::cout << "[ndt_matching] Use Standard PCL ver" << std::endl;
       pcl::NormalDistributionsTransform<pcl::PointXYZ, pcl::PointXYZ> new_ndt;
       pcl::PointCloud<pcl::PointXYZ>::Ptr output_cloud(new pcl::PointCloud<pcl::PointXYZ>);
       new_ndt.setResolution(ndt_res);
@@ -527,6 +531,7 @@ static void map_callback(const sensor_msgs::PointCloud2::ConstPtr& input)
 
     map_loaded = 1;
   }
+  std::cout << "[ndt_matching] Finish loading map" << std::endl;
 }
 
 static void gnss_callback(const geometry_msgs::PoseStamped::ConstPtr& input)
@@ -575,6 +580,7 @@ static void gnss_callback(const geometry_msgs::PoseStamped::ConstPtr& input)
 
 static void initialpose_callback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& input)
 {
+  std::cout << "[ndt_matching] initialpose_callback begins" << std::endl;
   tf::TransformListener listener;
   tf::StampedTransform transform;
   try
@@ -655,6 +661,8 @@ static void initialpose_callback(const geometry_msgs::PoseWithCovarianceStamped:
   offset_imu_odom_roll = 0.0;
   offset_imu_odom_pitch = 0.0;
   offset_imu_odom_yaw = 0.0;
+
+  std::cout << "[ndt_matching] initialpose_callback done" << std::endl;
 }
 
 static void imu_odom_calc(ros::Time current_time)
@@ -881,6 +889,7 @@ static void imu_callback(const sensor_msgs::Imu::Ptr& input)
 
 static void points_callback(const sensor_msgs::PointCloud2::ConstPtr& input)
 {
+  std::cout << "points_callback begins" << std::endl;
   if (map_loaded == 1 && init_pos_set == 1)
   {
     matching_start = std::chrono::system_clock::now();
@@ -1445,6 +1454,8 @@ static void points_callback(const sensor_msgs::PointCloud2::ConstPtr& input)
     previous_accel = current_accel;
 
     previous_estimated_vel_kmph.data = estimated_vel_kmph.data;
+  } else {
+    std::cout << "NDT is not ready, map:" << map_loaded << ", init:" << init_pos_set << std::endl;
   }
 }
 
