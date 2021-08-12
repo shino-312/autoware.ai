@@ -2,7 +2,7 @@
 
   <!-- setting path parameter -->
   <rosparam param="/waypoint_loader/lane_waypoint_csv">
-    ~/.autoware/data/path/aeon_ryusenji.csv
+    $(env HOME)/.autoware/data/path/aeon_ryusenji.csv
   </rosparam>
   <!-- <rosparam param="/waypoint_loader/vector_map_directory">
     ~/.autoware/data/map/vector_map
