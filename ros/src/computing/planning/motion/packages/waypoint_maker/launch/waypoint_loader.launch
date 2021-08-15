@@ -6,7 +6,7 @@
 	<arg name="disableVelocitySmoothing" default="0" />
 
 	<!-- rosrun waypoint_maker waypoint_loader _filename:="path file" -->
-	<node pkg="waypoint_maker" type="waypoint_loader" name="waypoint_loader" output="screen">
+	<node pkg="waypoint_maker" type="waypoint_loader" name="waypoint_loader" output="log">
 	<param name="multi_lane_csv" value="$(arg multi_lane_csv)" />
         <param name="decelerate" value="$(arg decelerate)" />
         <param name="disableDecisionMaker" value="$(arg disableDecisionMaker)" />

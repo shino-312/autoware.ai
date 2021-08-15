@@ -302,8 +302,11 @@ bool WaypointLoaderNode::verifyFileConsistency(const char *filename)
   ROS_INFO("verify...");
   std::ifstream ifs(filename);
 
-  if (!ifs)
+  if (!ifs) {
+    ROS_ERROR("Invalid path: %s", filename);
     return false;
+  }
+  ROS_INFO("Path %s found", filename);
 
   FileFormat format = checkFileFormat(filename);
   ROS_INFO("format: %d", static_cast<FileFormat>(format));
@@ -313,6 +316,8 @@ bool WaypointLoaderNode::verifyFileConsistency(const char *filename)
     return false;
   }
 
+  ROS_INFO("File format detected: %d", static_cast<int>(format));
+
   std::string line;
   std::getline(ifs, line);  // remove first line
 
@@ -320,11 +325,19 @@ bool WaypointLoaderNode::verifyFileConsistency(const char *filename)
               : format == FileFormat::ver2 ? 5 //x,y,z,yaw,velocity
               : countColumns(line);
 
+  ROS_INFO("Expected ncol:%d", static_cast<int>(ncol));
+  int n = 2;
+
   while (std::getline(ifs, line))  // search from second line
   {
-    if (countColumns(line) != ncol)
+    const auto cc = countColumns(line);
+    if (cc != ncol) {
+      ROS_ERROR("Columns uncorrect, line:%d, columns:%d", n, static_cast<int>(cc));
       return false;
+    }
   }
+  n++;
+  ROS_INFO("verification done!");
   return true;
 }
 
