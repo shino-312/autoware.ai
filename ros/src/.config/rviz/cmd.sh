@@ -17,7 +17,7 @@ fi
 #echo KEYFILE=[$KEYFILE]
 
 if [ x"$REMOTE" = x ]; then
-    rosrun rviz rviz
+  rosrun rviz rviz -d $DIR/default.rviz
 else
   KEYOPT=""
   if [ x"$KEYFILE" != x ]; then
